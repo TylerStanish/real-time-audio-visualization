@@ -1,20 +1,11 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron')
-const coreAudio = require('node-core-audio');
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
-function processAudio( inputBuffer ) {
-  console.log(inputBuffer[0].length);
-
-  return inputBuffer;
-}
-
 function createWindow () {
-  // let engine = coreAudio.createNewAudioEngine();
-  // engine.addAudioCallback( processAudio );
-
 
   mainWindow = new BrowserWindow({width: 800, height: 600})
   mainWindow.loadFile('index.html')
