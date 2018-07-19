@@ -4,8 +4,10 @@
 
 const coreAudio = require('node-core-audio');
 
-function render(arr){
-  console.log(arr);
+
+
+
+function render(arr=new Array(16)){
   let content = document.getElementById('content')
 
   const width = window.outerWidth;
@@ -15,9 +17,12 @@ function render(arr){
     const barPos = i*(width/16);
     div.style.left = barPos + 'px';
     div.style.width = width/16 + 'px';
+    div.style.height = arr[i]*1000 + 'px';
     content.appendChild(div);
   }
 }
+
+
 
 function runningAverage(oldVal=0, len, newVal){
   // debugger;
@@ -27,25 +32,39 @@ function runningAverage(oldVal=0, len, newVal){
 let count = 1;
 function processAudio( inputBuffer ) {
 
-  if(count % 8 !== 0){
-    return inputBuffer;
-  }else{
-    count = 1;
-  }
+  // if(count % 24 !== 0){
+  //   count++;
+  //   return inputBuffer;
+  // }else{
+  //   debugger;
+    // count = 1;
+  // }
 
   let bars = new Array(16);
   for(let i=0; i<inputBuffer[0].length; i++){
     const index = Math.floor(i/16);
     const distanceBetweenStart = i - index*16;
     bars[index] = runningAverage(bars[index], distanceBetweenStart, inputBuffer[0][i]);
-    render(bars);
+    // render(bars);
   }
 
   return inputBuffer;
 }
 
-document.addEventListener("DOMContentLoaded", function(event) {
-  let engine = coreAudio.createNewAudioEngine();
-  engine.addAudioCallback( processAudio );
-  render();
-});
+
+let engine = coreAudio.createNewAudioEngine();
+// engine.setOptions({sampleRate: 5000});
+// engine.addAudioCallback( processAudio );
+
+setInterval(() => {
+  // Grab a buffer
+  let buffer = engine.read();
+  console.log(buffer);
+// Silence the 0th channel
+  for( let iSample=0; iSample<buffer[0].length; ++iSample ){
+    buffer[0][iSample] = 0.0;
+  }
+  console.log(buffer);
+// Send the buffer back to the sound card
+  engine.write(buffer);
+}, 1000);
