@@ -6,7 +6,6 @@ const coreAudio = require('node-core-audio');
 
 
 
-
 function render(arr=new Array(16)){
   // let content = document.getElementById('content');
   const width = window.outerWidth;
@@ -17,7 +16,7 @@ function render(arr=new Array(16)){
     const barPos = i*(width/16);
     div.style.left = barPos + 'px';
     div.style.width = width/16 + 'px';
-    div.style.height = arr[i]*5000 + 'px';
+    div.style.height = arr[i]*2000000 + 'px';
     // content.appendChild(div);
   }
 }
@@ -33,10 +32,10 @@ let count = 1;
 function processAudio( inputBuffer ) {
 
   let bars = new Array(16);
-  for(let i=0; i<inputBuffer[0].length; i++){
+  for(let i=0; i<inputBuffer.length; i++){
     const index = Math.floor(i/16);
     const distanceBetweenStart = i - index*16;
-    bars[index] = runningAverage(bars[index], distanceBetweenStart, inputBuffer[0][i]);
+    bars[index] = runningAverage(bars[index], distanceBetweenStart, inputBuffer[i]);
     
     // count += 1;
     // if(count % 64 === 0){
@@ -75,16 +74,21 @@ console.log(
   engine.getDeviceName(3), 
   engine.getDeviceName(4)
 );
-let counter = 1;
+
+
+const ft = require('fourier-transform');
+const db = require('decibels');
+
+const frequency = 440;
+const size = 1024;
+const sampleRate = 44100;
+
+
 engine.addAudioCallback(function (inputBuffer) {
-  processAudio(inputBuffer);
-  return;
-  if(counter * 64 === 0){
-    counter = 1;
-    return processAudio(inputBuffer);
-  }else{
-    counter += 1;
-    console.log(inputBuffer);
-    return inputBuffer;
-  }
+  let spectrum = ft(inputBuffer[0]);
+  let decibels = spectrum.map((value) => db.fromGain(value))
+  console.log(spectrum);
+  console.log(decibels);
+  processAudio(spectrum);
+  // return inputBuffer;
 });
