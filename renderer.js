@@ -17,7 +17,7 @@ function render(arr=new Array(16)){
     const barPos = i*(width/16);
     div.style.left = barPos + 'px';
     div.style.width = width/16 + 'px';
-    div.style.height = arr[i]*1e13 + 'px';
+    div.style.height = arr[i]*5000 + 'px';
     // content.appendChild(div);
   }
 }
@@ -60,16 +60,31 @@ let engine = coreAudio.createNewAudioEngine();
 var options = {
     inputChannels: 1,
     outputChannels: 1,
-    useMicrophone: false,
+    inputDevice: 2,
+    // outputDevice: 4
     // inputDevice: 1,
     // outputDevice: 0
 };
 
 engine.setOptions(options);
 console.log(engine.getOptions());
-console.log(engine.getDeviceName(0), engine.getDeviceName(1));
+console.log(
+  engine.getDeviceName(0), 
+  engine.getDeviceName(1), 
+  engine.getDeviceName(2), 
+  engine.getDeviceName(3), 
+  engine.getDeviceName(4)
+);
+let counter = 1;
 engine.addAudioCallback(function (inputBuffer) {
-  let newBuffer = inputBuffer.slice();
-  console.log(inputBuffer);
-  return processAudio(newBuffer);
+  processAudio(inputBuffer);
+  return;
+  if(counter * 64 === 0){
+    counter = 1;
+    return processAudio(inputBuffer);
+  }else{
+    counter += 1;
+    console.log(inputBuffer);
+    return inputBuffer;
+  }
 });
