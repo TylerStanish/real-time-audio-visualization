@@ -20,6 +20,10 @@
     "electron": "^2.0.0"
   },
   "dependencies": {
+    "decibels": "^2.0.0",
+    "dspjs": "^1.0.0",
+    "fft": "^0.2.1",
+    "fourier-transform": "^1.1.2",
     "node-core-audio": "github:ZECTBynmo/node-core-audio"
   }
 }
