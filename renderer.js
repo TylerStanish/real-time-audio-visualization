@@ -22,13 +22,12 @@ let count = 1
 
 function processAudio(inputBuffer){
   if(count % 2 === 0){
-    // debugger;
     setTimeout(() => render(inputBuffer), 0)
     count = 1;
   }else{ count += 1; }
   return inputBuffer;
 
-  let bars = new Array(WIDTH)
+  /*let bars = new Array(WIDTH)
   for(let i = 0; i < inputBuffer.length; i++){
     const index = Math.floor(i / WIDTH)
     const distanceBetweenStart = i - index * WIDTH
@@ -40,7 +39,7 @@ function processAudio(inputBuffer){
     count = 1;
   }else{ count += 1; }
 
-  return inputBuffer
+  return inputBuffer*/
 }
 
 let engine = coreAudio.createNewAudioEngine()
@@ -81,7 +80,6 @@ document.addEventListener('DOMContentLoaded', start)
 engine.addAudioCallback(function(inputBuffer){
   let spectrum = ft(inputBuffer[0])
   let decibels = spectrum.map((value) => db.fromGain(value))
-  // console.log(spectrum)
   processAudio(spectrum)
   // return inputBuffer;
 })
